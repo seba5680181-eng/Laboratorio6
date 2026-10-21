@@ -33,3 +33,32 @@ def derivada_analitica(coeficientes, x):
 
     # Evaluo la derivada en el valor de x que ingreso.
     return evaluar_polinomio(derivada, x)
+
+
+def metodo_biseccion(coeficientes, a, b, tolerancia, max_iteraciones):
+    # Calculo el valor del polinomio en los extremos.
+    fa = evaluar_polinomio(coeficientes, a)
+    fb = evaluar_polinomio(coeficientes, b)
+
+    # Verifico que haya un cambio de signo en el intervalo.
+    if fa * fb > 0:
+        raise ValueError("El intervalo no contiene un cambio de signo.")
+
+    # Repito el cálculo hasta alcanzar la tolerancia o el máximo.
+    for i in range(max_iteraciones):
+        medio = (a + b) / 2
+        fm = evaluar_polinomio(coeficientes, medio)
+
+        # Compruebo si encontré una raíz aproximada.
+        if abs(fm) < tolerancia or (b - a) / 2 < tolerancia:
+            return medio
+
+        # Elijo la mitad del intervalo que contiene el cambio de signo.
+        if fa * fm < 0:
+            b = medio
+            fb = fm
+        else:
+            a = medio
+            fa = fm
+
+    return (a + b) / 2
