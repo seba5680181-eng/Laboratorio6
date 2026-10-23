@@ -86,3 +86,29 @@ def metodo_newton_raphson(coeficientes, x0, tolerancia, max_iteraciones):
         x = x_nuevo
 
     return x
+
+def metodo_secante(coeficientes, x0, x1, tolerancia, max_iteraciones):
+    # Calculo el valor inicial del polinomio en los dos puntos.
+    f0 = evaluar_polinomio(coeficientes, x0)
+    f1 = evaluar_polinomio(coeficientes, x1)
+
+    # Repito el cálculo hasta encontrar una aproximación a la raíz.
+    for i in range(max_iteraciones):
+        # Verifico que no se produzca una división por cero.
+        if abs(f1 - f0) < 1e-12:
+            raise ValueError("No se puede continuar con el método de la secante.")
+
+        # Calculo una nueva aproximación usando la fórmula de la secante.
+        x2 = x1 - f1 * (x1 - x0) / (f1 - f0)
+
+        # Compruebo si la aproximación cumple la tolerancia.
+        if abs(x2 - x1) < tolerancia:
+            return x2
+
+        # Actualizo los puntos para la siguiente iteración.
+        x0 = x1
+        f0 = f1
+        x1 = x2
+        f1 = evaluar_polinomio(coeficientes, x1)
+
+    return x1
