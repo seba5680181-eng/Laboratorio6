@@ -62,3 +62,27 @@ def metodo_biseccion(coeficientes, a, b, tolerancia, max_iteraciones):
             fa = fm
 
     return (a + b) / 2
+
+def metodo_newton_raphson(coeficientes, x0, tolerancia, max_iteraciones):
+    # Empiezo con el valor inicial que ingreso.
+    x = x0
+
+    # Repito el cálculo hasta alcanzar la tolerancia.
+    for i in range(max_iteraciones):
+        fx = evaluar_polinomio(coeficientes, x)
+        dfx = derivada_analitica(coeficientes, x)
+
+        # Verifico que la derivada no sea cero.
+        if abs(dfx) < 1e-12:
+            raise ValueError("La derivada es cero o demasiado pequeña.")
+
+        # Calculo la siguiente aproximación de la raíz.
+        x_nuevo = x - fx / dfx
+
+        # Compruebo si la aproximación ya es suficientemente buena.
+        if abs(x_nuevo - x) < tolerancia:
+            return x_nuevo
+
+        x = x_nuevo
+
+    return x
