@@ -123,3 +123,42 @@ def derivada_numerica(coeficientes, x, h=0.0001):
     derivada = (f_adelante - f_atras) / (2 * h)
 
     return derivada
+
+def metodo_gauss(A, b, pivoteo=True):
+    # Trabajo con copias para no modificar los datos originales.
+    A = [fila[:] for fila in A]
+    b = b[:]
+    n = len(b)
+
+    # Eliminación hacia adelante.
+    for k in range(n - 1):
+
+        # Pivoteo parcial: busco el elemento de mayor valor absoluto.
+        if pivoteo:
+            fila_max = max(range(k, n), key=lambda i: abs(A[i][k]))
+            A[k], A[fila_max] = A[fila_max], A[k]
+            b[k], b[fila_max] = b[fila_max], b[k]
+
+        if abs(A[k][k]) < 1e-12:
+            raise ValueError("El sistema tiene un pivote cero.")
+
+        # Hago ceros debajo del pivote.
+        for i in range(k + 1, n):
+            factor = A[i][k] / A[k][k]
+
+            for j in range(k, n):
+                A[i][j] -= factor * A[k][j]
+
+            b[i] -= factor * b[k]
+
+    if abs(A[n - 1][n - 1]) < 1e-12:
+        raise ValueError("El sistema no tiene solución única.")
+
+    # Sustitución hacia atrás.
+    x = [0.0] * n
+
+    for i in range(n - 1, -1, -1):
+        suma = sum(A[i][j] * x[j] for j in range(i + 1, n))
+        x[i] = (b[i] - suma) / A[i][i]
+
+    return x
