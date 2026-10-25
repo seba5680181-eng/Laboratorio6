@@ -112,3 +112,14 @@ def metodo_secante(coeficientes, x0, x1, tolerancia, max_iteraciones):
         f1 = evaluar_polinomio(coeficientes, x1)
 
     return x1
+
+
+def derivada_numerica(coeficientes, x, h=0.0001):
+    # Calculo el valor del polinomio un poco antes y después de x.
+    f_adelante = evaluar_polinomio(coeficientes, x + h)
+    f_atras = evaluar_polinomio(coeficientes, x - h)
+
+    # Aproximo la derivada usando diferencias centradas.
+    derivada = (f_adelante - f_atras) / (2 * h)
+
+    return derivada
