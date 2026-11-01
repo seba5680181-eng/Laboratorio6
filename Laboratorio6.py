@@ -162,3 +162,25 @@ def metodo_gauss(A, b, pivoteo=True):
         x[i] = (b[i] - suma) / A[i][i]
 
     return x
+
+def metodo_simpson(funcion, a, b, n):
+    # La cantidad de subintervalos debe ser par.
+    if n <= 0 or n % 2 != 0:
+        raise ValueError("La cantidad de subintervalos debe ser positiva y par.")
+
+    h = (b - a) / n
+
+    # Calculo los extremos.
+    suma = funcion(a) + funcion(b)
+
+    # Sumo los términos interiores.
+    for i in range(1, n):
+        x = a + i * h
+
+        if i % 2 == 0:
+            suma += 2 * funcion(x)
+        else:
+            suma += 4 * funcion(x)
+
+    return (h / 3) * suma
+
