@@ -1,9 +1,10 @@
-
-
 # Laboratorio 6 - Informática II
+# Alumnos: Sebastian Vallejos - Larrea Toftum Cristian
 # Cálculo numérico
 # Repositorio GitHub:
 # https://github.com/seba5680181-eng/Laboratorio6
+# Se inicia con "python Laboratorio6.py"
+
 
 
 # FUNCIONES MATEMATICAS
@@ -354,3 +355,638 @@ vector_prueba = [5, 0, 13, -9]
 # Función para utilizar el polinomio en Simpson.
 def funcion_prueba(x):
     return evaluar_polinomio(coeficientes_prueba, x)
+
+
+
+# INTERFAZ GRAFICA - TKINTER
+
+
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+
+def iniciar_interfaz():
+
+    ventana = tk.Tk()
+    ventana.title("Laboratorio 6 - Informática II")
+    ventana.geometry("850x720")
+    ventana.resizable(False, False)
+
+    # FUNCIONES AUXILIARES
+   
+
+    def crear_entrada(parent, texto, valor, fila, columna=0):
+
+        tk.Label(parent, text=texto).grid(
+            row=fila, column=columna, padx=5, pady=6, sticky="e"
+        )
+
+        entrada = tk.Entry(parent, width=18)
+        entrada.grid(row=fila, column=columna + 1, padx=5, pady=6)
+        entrada.insert(0, str(valor))
+
+        return entrada
+
+    def leer_float(entrada, nombre):
+
+        try:
+            return float(entrada.get())
+        except ValueError:
+            raise ValueError(nombre + " debe ser un número válido.")
+
+    def leer_entero(entrada, nombre):
+
+        try:
+            return int(entrada.get())
+        except ValueError:
+            raise ValueError(nombre + " debe ser un número entero.")
+
+    def leer_coeficientes():
+
+        texto = entrada_coeficientes.get().strip()
+
+        if not texto:
+            raise ValueError("Debe ingresar los coeficientes.")
+
+        try:
+            coeficientes = [
+                float(valor.strip())
+                for valor in texto.split(",")
+            ]
+        except ValueError:
+            raise ValueError(
+                "Ingrese los coeficientes separados por comas."
+            )
+
+        if len(coeficientes) > 7:
+            raise ValueError(
+                "El polinomio no puede superar el grado 6."
+            )
+
+        return coeficientes
+
+    def mostrar_resultado(area, texto):
+
+        area.config(state="normal")
+        area.delete("1.0", tk.END)
+        area.insert(tk.END, texto)
+        area.config(state="disabled")
+
+    def limpiar_resultado(area):
+
+        mostrar_resultado(area, "")
+
+    def manejar_error(error):
+
+        messagebox.showerror("Error", str(error))
+
+  
+    # VENTANA PRINCIPAL
+   
+
+    tk.Label(
+        ventana,
+        text="LABORATORIO 6 - CALCULO NUMERICO",
+        font=("Arial", 17, "bold")
+    ).pack(pady=10)
+
+    tk.Label(
+        ventana,
+        text="Informática II",
+        font=("Arial", 11)
+    ).pack()
+
+   
+    # INGRESO DEL POLINOMIO
+  
+
+    marco_polinomio = tk.LabelFrame(
+        ventana,
+        text="Polinomio",
+        padx=10,
+        pady=10
+    )
+    marco_polinomio.pack(fill="x", padx=15, pady=10)
+
+    tk.Label(
+        marco_polinomio,
+        text="Coeficientes de mayor a menor grado:"
+    ).pack(side="left", padx=5)
+
+    entrada_coeficientes = tk.Entry(
+        marco_polinomio,
+        width=60
+    )
+    entrada_coeficientes.pack(side="left", padx=5)
+
+    entrada_coeficientes.insert(
+        0, "1, 0, -8, 0, 82, -25"
+    )
+
+     # PESTAÑAS DE OPERACIONES
+    
+
+    pestañas = ttk.Notebook(ventana)
+    pestañas.pack(fill="both", expand=True, padx=15, pady=10)
+
+    pestaña_raices = ttk.Frame(pestañas)
+    pestaña_derivada = ttk.Frame(pestañas)
+    pestaña_gauss = ttk.Frame(pestañas)
+    pestaña_simpson = ttk.Frame(pestañas)
+
+    pestañas.add(pestaña_raices, text="Raíces")
+    pestañas.add(pestaña_derivada, text="Derivada")
+    pestañas.add(pestaña_gauss, text="Gauss")
+    pestañas.add(pestaña_simpson, text="Simpson")
+
+  
+    # PESTAÑA 1 - RAICES
+    
+
+    marco_raices = tk.LabelFrame(
+        pestaña_raices,
+        text="Métodos para calcular raíces",
+        padx=10,
+        pady=10
+    )
+    marco_raices.pack(fill="x", padx=10, pady=10)
+
+    tk.Label(
+        marco_raices,
+        text="Método:"
+    ).grid(row=0, column=0, padx=5, pady=5)
+
+    combo_metodo = ttk.Combobox(
+        marco_raices,
+        values=["Bisección", "Newton-Raphson", "Secante"],
+        state="readonly",
+        width=20
+    )
+    combo_metodo.grid(row=0, column=1, padx=5, pady=5)
+    combo_metodo.current(0)
+
+    entrada_a = crear_entrada(
+        marco_raices, "Extremo a:", "0", 1, 0
+    )
+
+    entrada_b = crear_entrada(
+        marco_raices, "Extremo b:", "1", 1, 2
+    )
+
+    entrada_x0 = crear_entrada(
+        marco_raices, "Valor x0:", "0", 2, 0
+    )
+
+    entrada_x1 = crear_entrada(
+        marco_raices, "Valor x1:", "-1", 2, 2
+    )
+
+    tk.Label(
+        marco_raices,
+        text="Condición de parada:"
+    ).grid(row=3, column=0, padx=5, pady=5)
+
+    combo_tolerancia = ttk.Combobox(
+        marco_raices,
+        values=["Error porcentual", "Cifras significativas"],
+        state="readonly",
+        width=22
+    )
+    combo_tolerancia.grid(row=3, column=1, padx=5, pady=5)
+    combo_tolerancia.current(0)
+
+    entrada_valor_tolerancia = crear_entrada(
+        marco_raices, "Valor:", "0.5", 3, 2
+    )
+
+    entrada_max_iteraciones = crear_entrada(
+        marco_raices, "Máximo iteraciones:", "100", 4, 0
+    )
+
+    def calcular_raiz():
+
+        try:
+
+            coeficientes = leer_coeficientes()
+
+            metodo = combo_metodo.get()
+
+            valor = leer_float(
+                entrada_valor_tolerancia,
+                "La tolerancia"
+            )
+
+            if combo_tolerancia.get() == "Cifras significativas":
+                modo = "Cifras significativas"
+            else:
+                modo = "Error porcentual"
+
+            tolerancia, cifras = obtener_tolerancia(
+                modo, valor
+            )
+
+            max_iteraciones = leer_entero(
+                entrada_max_iteraciones,
+                "El máximo de iteraciones"
+            )
+
+            if max_iteraciones <= 0:
+                raise ValueError(
+                    "El máximo de iteraciones debe ser positivo."
+                )
+
+            if metodo == "Bisección":
+
+                a = leer_float(entrada_a, "El extremo a")
+                b = leer_float(entrada_b, "El extremo b")
+
+                resultado = metodo_biseccion(
+                    coeficientes,
+                    a,
+                    b,
+                    tolerancia,
+                    max_iteraciones
+                )
+
+            elif metodo == "Newton-Raphson":
+
+                x0 = leer_float(entrada_x0, "El valor x0")
+
+                resultado = metodo_newton_raphson(
+                    coeficientes,
+                    x0,
+                    tolerancia,
+                    max_iteraciones
+                )
+
+            else:
+
+                x0 = leer_float(entrada_x0, "El valor x0")
+                x1 = leer_float(entrada_x1, "El valor x1")
+
+                resultado = metodo_secante(
+                    coeficientes,
+                    x0,
+                    x1,
+                    tolerancia,
+                    max_iteraciones
+                )
+
+            raiz, iteraciones, error, fx = resultado
+
+            if cifras is not None:
+                raiz_formateada = f"{raiz:.{cifras}g}"
+            else:
+                raiz_formateada = f"{raiz:.10g}"
+
+            texto = (
+                "RESULTADOS\n"
+                "------------------------------\n"
+                f"Método: {metodo}\n"
+                f"Raíz encontrada: {raiz_formateada}\n"
+                f"Iteraciones: {iteraciones}\n"
+                f"Error aproximado relativo: {error:.10g} %\n"
+                f"f(xr): {fx:.10g}\n"
+                f"Tolerancia: {tolerancia:.10g} %"
+            )
+
+            mostrar_resultado(resultado_raices, texto)
+
+        except (ValueError, ZeroDivisionError, OverflowError) as error:
+            manejar_error(error)
+
+    tk.Button(
+        pestaña_raices,
+        text="Calcular raíz",
+        command=calcular_raiz,
+        width=20
+    ).pack(pady=10)
+
+    resultado_raices = tk.Text(
+        pestaña_raices,
+        height=10,
+        width=90,
+        state="disabled"
+    )
+    resultado_raices.pack(padx=10, pady=10)
+
+    
+    # PESTAÑA 2 - DERIVADA NUMERICA
+  
+
+    marco_derivada = tk.LabelFrame(
+        pestaña_derivada,
+        text="Diferencia finita centrada",
+        padx=10,
+        pady=10
+    )
+    marco_derivada.pack(fill="x", padx=15, pady=15)
+
+    entrada_x = crear_entrada(
+        marco_derivada, "Punto x:", "1", 0
+    )
+
+    entrada_h = crear_entrada(
+        marco_derivada, "Paso h:", "0.1", 1
+    )
+
+    def calcular_derivada():
+
+        try:
+
+            coeficientes = leer_coeficientes()
+
+            x = leer_float(entrada_x, "El punto x")
+            h = leer_float(entrada_h, "El paso h")
+
+            resultado = derivada_numerica(
+                coeficientes, x, h
+            )
+
+            texto = (
+                "RESULTADO DE LA DERIVADA\n"
+                "------------------------------\n"
+                f"Punto x: {x}\n"
+                f"Paso h: {h}\n"
+                f"Derivada aproximada: {resultado:.10g}"
+            )
+
+            mostrar_resultado(resultado_derivada, texto)
+
+        except (ValueError, ZeroDivisionError, OverflowError) as error:
+            manejar_error(error)
+
+    tk.Button(
+        pestaña_derivada,
+        text="Calcular derivada",
+        command=calcular_derivada,
+        width=20
+    ).pack(pady=10)
+
+    resultado_derivada = tk.Text(
+        pestaña_derivada,
+        height=10,
+        width=90,
+        state="disabled"
+    )
+    resultado_derivada.pack(padx=10, pady=10)
+
+ 
+    # PESTAÑA 3 - SISTEMA DE ECUACIONES GAUSS
+  
+
+    marco_gauss = tk.LabelFrame(
+        pestaña_gauss,
+        text="Matriz de coeficientes 4x4",
+        padx=10,
+        pady=10
+    )
+    marco_gauss.pack(pady=10)
+
+    entradas_matriz = []
+
+    for i in range(4):
+
+        fila_entradas = []
+
+        for j in range(4):
+
+            entrada = tk.Entry(
+                marco_gauss,
+                width=9,
+                justify="center"
+            )
+
+            entrada.grid(
+                row=i,
+                column=j,
+                padx=5,
+                pady=5
+            )
+
+            entrada.insert(
+                0, str(matriz_prueba[i][j])
+            )
+
+            fila_entradas.append(entrada)
+
+        entradas_matriz.append(fila_entradas)
+
+    marco_vector = tk.LabelFrame(
+        pestaña_gauss,
+        text="Vector de términos independientes",
+        padx=10,
+        pady=10
+    )
+    marco_vector.pack(pady=5)
+
+    entradas_vector = []
+
+    for i, valor in enumerate(vector_prueba):
+
+        entrada = tk.Entry(
+            marco_vector,
+            width=9,
+            justify="center"
+        )
+
+        entrada.grid(
+            row=0,
+            column=i,
+            padx=5,
+            pady=5
+        )
+
+        entrada.insert(0, str(valor))
+        entradas_vector.append(entrada)
+
+    tk.Label(
+        pestaña_gauss,
+        text="Método de resolución:"
+    ).pack(pady=5)
+
+    combo_pivoteo = ttk.Combobox(
+        pestaña_gauss,
+        values=["Con pivoteo parcial", "Sin pivoteo"],
+        state="readonly",
+        width=25
+    )
+    combo_pivoteo.pack()
+    combo_pivoteo.current(0)
+
+    def calcular_gauss():
+
+        try:
+
+            A = []
+            b = []
+
+            # Leo los valores de la matriz.
+            for i in range(4):
+
+                fila = []
+
+                for j in range(4):
+
+                    valor = leer_float(
+                        entradas_matriz[i][j],
+                        "La matriz"
+                    )
+
+                    fila.append(valor)
+
+                A.append(fila)
+
+            # Leo el vector independiente.
+            for entrada in entradas_vector:
+
+                valor = leer_float(
+                    entrada,
+                    "El vector independiente"
+                )
+
+                b.append(valor)
+
+            pivoteo = (
+                combo_pivoteo.get() == "Con pivoteo parcial"
+            )
+
+            solucion = metodo_gauss(A, b, pivoteo)
+
+            texto = (
+                "RESULTADO DEL SISTEMA\n"
+                "------------------------------\n"
+                f"x1 = {solucion[0]:.10g}\n"
+                f"x2 = {solucion[1]:.10g}\n"
+                f"x3 = {solucion[2]:.10g}\n"
+                f"x4 = {solucion[3]:.10g}\n"
+                f"\nMétodo: {combo_pivoteo.get()}"
+            )
+
+            mostrar_resultado(resultado_gauss, texto)
+
+        except (ValueError, ZeroDivisionError, OverflowError) as error:
+            manejar_error(error)
+
+    tk.Button(
+        pestaña_gauss,
+        text="Resolver sistema",
+        command=calcular_gauss,
+        width=20
+    ).pack(pady=10)
+
+    resultado_gauss = tk.Text(
+        pestaña_gauss,
+        height=9,
+        width=90,
+        state="disabled"
+    )
+    resultado_gauss.pack(padx=10, pady=10)
+
+    
+    # PESTAÑA 4 - INTEGRAL SIMPSON 1/3
+    
+
+    marco_simpson = tk.LabelFrame(
+        pestaña_simpson,
+        text="Integral definida",
+        padx=10,
+        pady=10
+    )
+    marco_simpson.pack(fill="x", padx=15, pady=15)
+
+    entrada_integral_a = crear_entrada(
+        marco_simpson, "Límite inferior a:", "0", 0
+    )
+
+    entrada_integral_b = crear_entrada(
+        marco_simpson, "Límite superior b:", "2", 1
+    )
+
+    entrada_n = crear_entrada(
+        marco_simpson, "Cantidad de segmentos n:", "2", 2
+    )
+
+    def calcular_integral():
+
+        try:
+
+            coeficientes = leer_coeficientes()
+
+            a = leer_float(
+                entrada_integral_a,
+                "El límite inferior"
+            )
+
+            b = leer_float(
+                entrada_integral_b,
+                "El límite superior"
+            )
+
+            n = leer_entero(
+                entrada_n,
+                "La cantidad de segmentos"
+            )
+
+            if a >= b:
+                raise ValueError(
+                    "El límite inferior debe ser menor que el superior."
+                )
+
+            # Defino el polinomio que se va a integrar.
+            def funcion(x):
+                return evaluar_polinomio(coeficientes, x)
+
+            resultado = metodo_simpson(
+                funcion, a, b, n
+            )
+
+            texto = (
+                "RESULTADO DE LA INTEGRAL\n"
+                "------------------------------\n"
+                f"Límite inferior: {a}\n"
+                f"Límite superior: {b}\n"
+                f"Cantidad de segmentos: {n}\n"
+                f"Integral aproximada: {resultado:.10g}"
+            )
+
+            mostrar_resultado(resultado_simpson, texto)
+
+        except (ValueError, ZeroDivisionError, OverflowError) as error:
+            manejar_error(error)
+
+    tk.Button(
+        pestaña_simpson,
+        text="Calcular integral",
+        command=calcular_integral,
+        width=20
+    ).pack(pady=10)
+
+    resultado_simpson = tk.Text(
+        pestaña_simpson,
+        height=10,
+        width=90,
+        state="disabled"
+    )
+    resultado_simpson.pack(padx=10, pady=10)
+
+   
+    # PIE DE VENTANA
+    
+
+    tk.Label(
+        ventana,
+        text="Laboratorio 6 - Informática II",
+        font=("Arial", 9)
+    ).pack(pady=5)
+
+    ventana.mainloop()
+
+
+
+# EJECUCION DEL PROGRAMA
+
+
+if __name__ == "__main__":
+    iniciar_interfaz()
+
